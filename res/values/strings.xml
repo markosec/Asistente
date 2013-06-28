@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Asistente</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="b_start">Iniciar</string>
+    <string name="b_stop">Detener</string>
+    <string name="title_activity_display_message">Mensajito</string>
+
+</resources>
