@@ -28,14 +28,11 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 			if (tts.isLanguageAvailable(lang) == TextToSpeech.LANG_COUNTRY_AVAILABLE) {
 				int result = tts.setLanguage(lang);
 				if (result == TextToSpeech.LANG_MISSING_DATA
-						|| result == TextToSpeech.LANG_NOT_SUPPORTED) {
-					// Toast.makeText(cont, "Sin español",
-					// Toast.LENGTH_SHORT).show();
-					Log.e("TTS", "Initilization Failed!1");
+   				 || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+					Log.e("TTS", "Initilization Failed!");
 				}
 			} else {
-				// Toast.makeText(cont, "Sin Español",
-				// Toast.LENGTH_SHORT).show();
+
 				Log.e("TTS", "Initilization Failed2!");
 			}
 		} else {
@@ -47,7 +44,7 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 
 	public boolean decir(String texto) {
 		int resultado = 0;
-		tts.speak(" ", TextToSpeech.QUEUE_ADD,null);
+		tts.speak(",", TextToSpeech.QUEUE_ADD,null);
 		resultado = tts.speak(texto, TextToSpeech.QUEUE_ADD, null);
 		if (resultado != TextToSpeech.SUCCESS)
 			return false;

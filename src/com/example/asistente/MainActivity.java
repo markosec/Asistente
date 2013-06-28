@@ -46,7 +46,13 @@ public class MainActivity extends Activity {
 		EscuchaBt conector    = new EscuchaBt();
 		filtroBt.addAction("android.bluetooth.device.action.ACL_CONNECTED");
 		filtroBt.addAction("android.bluetooth.device.action.ACL_DISCONNECTED");
+		filtroBt.addAction("android.bluetooth.device.action.BOND_STATE_CHANGED");
 		this.registerReceiver(conector, filtroBt);	
+		
+	
+		
+		
+		
 
 	}
 

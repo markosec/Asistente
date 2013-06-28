@@ -2,7 +2,7 @@ package com.example.asistente;
 
 import java.util.Set;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
@@ -18,6 +18,7 @@ public class Estados {
 	private BluetoothDevice auricular = null;
 	private static Estados  yo        = null;
 
+
 	// private static final int REQUEST_ENABLE_BT = 1;
 
 	public Estados() {
@@ -26,6 +27,7 @@ public class Estados {
 	}
 
 	
+	@SuppressLint("InlinedApi")
 	public void buscarAuricular()
 	{
 		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -33,8 +35,8 @@ public class Estados {
 			// Device does not support Bluetooth
 			Toast.makeText(contexto, "Bluetooth no soportado",
 					Toast.LENGTH_SHORT).show();
-		} else {
-
+		} else {			
+			
 			if (!mBluetoothAdapter.isEnabled()) {
 				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				if (contexto != null)
@@ -105,8 +107,7 @@ public class Estados {
 	}
 	public void iniciar()
 	{
-		if (auricular == null)
-		    this.buscarAuricular();
+
 		if (lector == null)
 			lector   = new LeeSms();
 		if (hablador == null)
@@ -115,7 +116,8 @@ public class Estados {
 			hablador.iniciar(contexto);
 		}
 		
-		
+		if (auricular == null)
+		    this.buscarAuricular();
 	}
 	public void btConectado()
 	{
@@ -123,7 +125,6 @@ public class Estados {
 		if (auricular != null)
 		{	
 			hablador.decir("Casco conectado");
-			
 		}
 	}
 	public void btDesconectado()
