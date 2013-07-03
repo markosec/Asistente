@@ -6,23 +6,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.widget.Toast;
+
 
 public class Voz extends Activity implements TextToSpeech.OnInitListener {
 
 	private TextToSpeech tts;
-	private Context contexto;
 	private Estados jefe;
 	
 	
 	public void iniciar(Context cont) {
 		tts = new TextToSpeech(cont, this);
-		contexto = cont;
 	}
 
 	@Override
 	public void onInit(int status) {
-		// TODO Auto-generated method stub
+		
 		if (status == TextToSpeech.SUCCESS) {
 			Locale lang = new Locale("spa", "ESP");
 			if (tts.isLanguageAvailable(lang) == TextToSpeech.LANG_COUNTRY_AVAILABLE) {
@@ -42,10 +40,18 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 		jefe.setHablador(this);
 	};
 
+	public void decirNada()
+	{
+		//tts.playSilence(100, TextToSpeech.QUEUE_ADD, null);
+		jefe.termineDeHablar();
+		
+	}
+	
 	public boolean decir(String texto) {
 		int resultado = 0;
-		tts.speak(",", TextToSpeech.QUEUE_ADD,null);
+		tts.playSilence(500, TextToSpeech.QUEUE_FLUSH, null);
 		resultado = tts.speak(texto, TextToSpeech.QUEUE_ADD, null);
+
 		if (resultado != TextToSpeech.SUCCESS)
 			return false;
 		else
@@ -63,12 +69,12 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 		return tts.isSpeaking();
 	}
 	
-	public boolean avisar(String quien, String texto)
+	public boolean avisarRte(String quien)
 	{
 		
 		String dialogo = "";
-		dialogo += "Atencion, mensaje de " + quien + ".";
-		dialogo += "dice,," + texto;
+		dialogo += "Atencion, mensaje de " + quien + " .. ";
+		//dialogo += "dice .. " + texto;
 		return decir(dialogo);
 	}
 	

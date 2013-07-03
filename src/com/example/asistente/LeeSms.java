@@ -27,9 +27,9 @@ public class LeeSms extends BroadcastReceiver {
 			for (int i = 0; i < msg.length; i++) {
 				msg[i]  = SmsMessage.createFromPdu((byte[]) pdus[i]);
 				quien   = msg[i].getOriginatingAddress();
-				texto = msg[i].getMessageBody().toString(); 
-				jefe.nuevoMensaje(quien, texto);
+				texto += msg[i].getMessageBody().toString(); 
 			}
+			jefe.nuevoMensaje(quien, texto);
 
 		}
 

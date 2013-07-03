@@ -27,4 +27,14 @@
         android:onClick="terminar"
         android:text="@string/b_stop" />
 
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="63dp"
+        android:onClick="probar"
+        android:text="Button" />
+
 </RelativeLayout>
