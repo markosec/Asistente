@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
@@ -42,16 +43,22 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 
 	public void decirNada()
 	{
-		//tts.playSilence(100, TextToSpeech.QUEUE_ADD, null);
+		tts.playSilence(500, TextToSpeech.QUEUE_ADD, null);
+		//tts.speak(",", TextToSpeech.QUEUE_ADD, null);
 		jefe.termineDeHablar();
 		
 	}
 	
 	public boolean decir(String texto) {
-		int resultado = 0;
-		tts.playSilence(500, TextToSpeech.QUEUE_FLUSH, null);
-		resultado = tts.speak(texto, TextToSpeech.QUEUE_ADD, null);
+		AudioManager sonido = null;
 
+		sonido = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+		sonido.setBluetoothScoOn(true);
+
+		int resultado = 0;
+		tts.playSilence(500, TextToSpeech.QUEUE_ADD, null);
+		resultado = tts.speak(texto, TextToSpeech.QUEUE_ADD, null);
+		sonido.setBluetoothScoOn(false);
 		if (resultado != TextToSpeech.SUCCESS)
 			return false;
 		else

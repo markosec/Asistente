@@ -1,22 +1,12 @@
 package com.example.asistente;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
-import com.google.android.voiceime.VoiceRecognitionTrigger;
-
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
-import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -25,10 +15,9 @@ public class MainActivity extends Activity {
 	public static final String OTRO_MENSAJE = "Finalizando escucha";
 
 	
-	private VoiceRecognitionTrigger mVoiceRecognitionTrigger = null;
-	private LeeSms receptor = new LeeSms();
+	private LeeSms    receptor = new LeeSms();
 	private EscuchaBt conector = null;
-	private Telefono llamadas = null;
+	private Telefono  llamadas = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +65,7 @@ public class MainActivity extends Activity {
 		filtroBt.addAction("android.intent.action.PHONE_STATE");
 		this.registerReceiver(llamadas, filtroBt);
 		
-
+		this.setVolumeControlStream(AudioManager.STREAM_MUSIC); 
 	}
 
 	public void terminar(View view) {
@@ -108,21 +97,6 @@ public class MainActivity extends Activity {
 	
 	 Estados jefe = Estados.getInstance(getApplicationContext());
 	 jefe.probar();
-	 /*
-	  
- 	 private SpeechRecognizer sr = null;
-	 private MyRL listener = null;
-	 sr = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
-	 listener = new MyRL();
-	 sr.setRecognitionListener(listener); 
-	 Intent algo = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-	 algo.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-	 algo.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES");
-	 algo.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,5); 
-	 sr.startListening(algo);
-	 */
-	 //sr.startListening(RecognizerIntent.getVoiceDetailsIntent(getApplicationContext()));
-	 
 	 
  }
 }

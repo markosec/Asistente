@@ -146,24 +146,21 @@ public class Estados {
 		if (auricular == null)
 			this.buscarAuricular();
 		if ((contexto != null) && (auricular != null)) {
-			sonido = (AudioManager) contexto
-					.getSystemService(Context.AUDIO_SERVICE);
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,
-					AudioManager.FLAG_ALLOW_RINGER_MODES); // 1
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,
-					AudioManager.FLAG_ALLOW_RINGER_MODES); // 2
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,
-					AudioManager.FLAG_ALLOW_RINGER_MODES); // 3
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,
-					AudioManager.FLAG_ALLOW_RINGER_MODES); // 4
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,
-					AudioManager.FLAG_ALLOW_RINGER_MODES); // 5
+			sonido = (AudioManager) contexto.getSystemService(Context.AUDIO_SERVICE);
+			sonido.setBluetoothScoOn(true);
+			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 1
+			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 2
+			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 3
+			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 4
+			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 5
+			
 		}
 	}
 
 	public void btConectado() {
 		buscarAuricular();
 		if (auricular != null & !llamada) {
+			
 			hablador.decir("Casco conectado");
 		}
 	}
@@ -225,7 +222,7 @@ public class Estados {
 
 	public void probar() {
 		hablador.decir("Desea escucharlo?");
-		hablador.decirNada();
+		//hablador.decirNada();
 	}
 
 	public void escuche(String respuesta) {
@@ -269,8 +266,7 @@ public class Estados {
 		// {
 		if (hablador != null && !llamada) {
 			quien = this.buscarPorTel(quien);
-			silenciarMusica();	
-			hablador.decir("hola");
+			//silenciarMusica();	
 			hablador.avisarRte(quien);
 			hablador.decirNada();
 			msjPendiente = texto;
