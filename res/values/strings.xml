@@ -7,5 +7,6 @@
     <string name="b_start">Iniciar</string>
     <string name="b_stop">Detener</string>
     <string name="title_activity_display_message">Mensajito</string>
+    <string name="Probar_t">Probar</string>
 
 </resources>

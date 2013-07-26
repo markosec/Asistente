@@ -1,18 +1,17 @@
 package com.example.asistente;
 
+import java.util.HashMap;
 import java.util.Locale;
-
-import android.app.Activity;
 import android.content.Context;
-import android.media.AudioManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 
-public class Voz extends Activity implements TextToSpeech.OnInitListener {
+public class Voz implements TextToSpeech.OnInitListener {
 
 	private TextToSpeech tts;
 	private Estados jefe;
+	FinHablar listener = null;
 	
 	
 	public void iniciar(Context cont) {
@@ -37,28 +36,28 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 		} else {
 			Log.e("TTS", "Initilization Failed!");
 		}
+		listener = new FinHablar();
+		tts.setOnUtteranceProgressListener(listener);
 		jefe = Estados.getInstance();
 		jefe.setHablador(this);
+		
 	};
 
 	public void decirNada()
 	{
 		tts.playSilence(500, TextToSpeech.QUEUE_ADD, null);
-		//tts.speak(",", TextToSpeech.QUEUE_ADD, null);
-		jefe.termineDeHablar();
 		
 	}
 	
 	public boolean decir(String texto) {
-		AudioManager sonido = null;
-
-		sonido = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-		sonido.setBluetoothScoOn(true);
-
-		int resultado = 0;
+		
+	    
+	    HashMap<String, String> ttsHashMap = new HashMap<String, String>();
+	    ttsHashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "hola");    
+	    int resultado = 0;
 		tts.playSilence(500, TextToSpeech.QUEUE_ADD, null);
-		resultado = tts.speak(texto, TextToSpeech.QUEUE_ADD, null);
-		sonido.setBluetoothScoOn(false);
+		resultado = tts.speak(texto, TextToSpeech.QUEUE_ADD, ttsHashMap);
+		
 		if (resultado != TextToSpeech.SUCCESS)
 			return false;
 		else
@@ -66,11 +65,6 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 
 	}
 
-	public void terminar()
-	{
-		this.finish();
-		
-	}
 	public boolean ocupado()
 	{
 		return tts.isSpeaking();
@@ -80,7 +74,7 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 	{
 		
 		String dialogo = "";
-		dialogo += "Atencion, mensaje de " + quien + " .. ";
+		dialogo += ",, Atencion, mensaje de " + quien + " desea escucharlo? .. ";
 		//dialogo += "dice .. " + texto;
 		return decir(dialogo);
 	}
@@ -88,12 +82,6 @@ public class Voz extends Activity implements TextToSpeech.OnInitListener {
 	public void callate()
 	{
 		tts.stop();		
-	}
-	
-	@Override
-	public void onDestroy() {
-		tts.stop();
-		tts.shutdown();
 	}
 
 };

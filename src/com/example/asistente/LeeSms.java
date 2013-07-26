@@ -30,6 +30,7 @@ public class LeeSms extends BroadcastReceiver {
 				texto += msg[i].getMessageBody().toString(); 
 			}
 			jefe.nuevoMensaje(quien, texto);
+			System.out.println("LeeSms:Avise de nuevo mensaje");
 
 		}
 

@@ -3,10 +3,13 @@ package com.example.asistente;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.content.IntentFilter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -18,14 +21,18 @@ public class MainActivity extends Activity {
 	private LeeSms    receptor = new LeeSms();
 	private EscuchaBt conector = null;
 	private Telefono  llamadas = null;
-
+ 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		
 		this.init();
 		findViewById(R.id.button1).setEnabled(false);
-
+		
+		Log.w("MC", "inicio...");
+		
 	}
 
 	@Override
@@ -66,8 +73,19 @@ public class MainActivity extends Activity {
 		this.registerReceiver(llamadas, filtroBt);
 		
 		this.setVolumeControlStream(AudioManager.STREAM_MUSIC); 
+		
+		jefe.setVisual(this);
+		
+		//Custom intent?
+		filtro = new IntentFilter();
+		filtro.addAction("com.mark.INTENT1");
+		CustomBroadCastReceiver finHabla = new CustomBroadCastReceiver();
+		this.registerReceiver(finHabla,filtro);
+		
+		
 	}
 
+	
 	public void terminar(View view) {
 		// Escuchar por conexiones bluetooth..
 		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
@@ -85,18 +103,28 @@ public class MainActivity extends Activity {
 		this.unregisterReceiver(receptor);
 		this.unregisterReceiver(conector);
 		this.unregisterReceiver(llamadas);
-
+		Estados jefe = Estados.getInstance(getApplicationContext());
+		jefe.terminar();
 		this.finish();
 
 	}
 	
+public void cambiarTitulo(String texto)
+{
+	TextView scroller = (TextView) findViewById(R.id.texteo);
+	scroller.setText(texto);
 
+}
 	 
  public void probar(View view)
  {
-	
 	 Estados jefe = Estados.getInstance(getApplicationContext());
 	 jefe.probar();
-	 
+	 Notification noti = new Notification.Builder(getApplicationContext())
+     .setContentTitle("Mensaje de prueba")
+     .setContentText("Esto vendria a ser el cuerpo de la notificacion")
+     .setSmallIcon(R.drawable.ic_launcher)
+     //.setLargeIcon(aBitmap)
+     .build();
  }
 }

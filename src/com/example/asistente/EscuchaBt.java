@@ -7,7 +7,7 @@ import android.content.Intent;
 public class EscuchaBt extends BroadcastReceiver {
 
 	public EscuchaBt() {
-		// TODO Auto-generated constructor stub
+	
 	}
 
 	@Override

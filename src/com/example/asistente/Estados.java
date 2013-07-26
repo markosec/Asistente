@@ -1,9 +1,11 @@
 package com.example.asistente;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
@@ -11,10 +13,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Estados {
@@ -28,27 +33,27 @@ public class Estados {
 	private SpeechRecognizer sr = null;
 	private MyRL listener = null;
 	private String msjPendiente = "";
-	// private static final int REQUEST_ENABLE_BT = 1;
+	private boolean atento = false;
+	private Reproductor tocadiscos = null;
+	private MainActivity visual = null;
+	
 
 	public Estados() {
-		// TODO Auto-generated constructor stub
+		
 
 	}
 
 	@SuppressLint("InlinedApi")
 	public void buscarAuricular() {
-		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
-				.getDefaultAdapter();
+		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 		if (mBluetoothAdapter == null) {
 			// Device does not support Bluetooth
-			Toast.makeText(contexto, "Bluetooth no soportado",
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(contexto, "Bluetooth no soportado",Toast.LENGTH_SHORT).show();
 		} else {
 
 			if (!mBluetoothAdapter.isEnabled()) {
-				Intent enableBtIntent = new Intent(
-						BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				if (contexto != null) {
 					enableBtIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					// contexto.startActivity(enableBtIntent);
@@ -57,8 +62,7 @@ public class Estados {
 			}
 			if (mBluetoothAdapter.isEnabled()) {
 
-				Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
-						.getBondedDevices();
+				Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 				// If there are paired devices
 				if (pairedDevices.size() > 0) {
 					// Loop through paired devices
@@ -70,12 +74,9 @@ public class Estados {
 							Toast.makeText(contexto, st, Toast.LENGTH_SHORT)
 									.show();
 							if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-								Toast.makeText(contexto,
-										"pero no esta conectado",
-										Toast.LENGTH_SHORT).show();
+								Toast.makeText(contexto,"pero no esta conectado",Toast.LENGTH_SHORT).show();
 								auricular = null;
-							} else if (mBluetoothAdapter
-									.getProfileConnectionState(BluetoothProfile.HEADSET) == BluetoothAdapter.STATE_CONNECTED)
+							} else if (mBluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET) == BluetoothAdapter.STATE_CONNECTED)
 								auricular = device;
 
 							else
@@ -133,6 +134,29 @@ public class Estados {
 
 	}
 
+	public void cambieCancion(String cancion)
+	{
+		MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+		mmr.setDataSource(cancion);
+		String texto;
+		texto = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST) +
+				" - " +
+				mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+		if (mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)  == null && 
+		    mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST) == null)
+		{
+			texto = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+		}
+		visual.cambiarTitulo(texto);
+		Log.d("MC", "Tags de la cancion: " + texto);
+		
+	}
+	
+	public void setVisual(MainActivity cual)
+	{
+		visual = cual;
+	}
+	
 	public void iniciar() {
 
 		AudioManager sonido = null;
@@ -141,22 +165,48 @@ public class Estados {
 		if (hablador == null) {
 			hablador = new Voz();
 			hablador.iniciar(contexto);
+			
 		}
 
 		if (auricular == null)
 			this.buscarAuricular();
-		if ((contexto != null) && (auricular != null)) {
+//		if ((contexto != null) && (auricular != null)) { TODO cambiar
+		if ((contexto != null) ) {
 			sonido = (AudioManager) contexto.getSystemService(Context.AUDIO_SERVICE);
-			sonido.setBluetoothScoOn(true);
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 1
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 2
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 3
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 4
-			sonido.adjustStreamVolume(6, AudioManager.ADJUST_RAISE,AudioManager.FLAG_ALLOW_RINGER_MODES); // 5
+			//sonido.setRingerMode(AudioManager.RINGER_MODE_SILENT); //TODO esto se cambia para el bip
+			
+			sonido.setStreamVolume(6, sonido.getStreamMaxVolume(6), AudioManager.FLAG_PLAY_SOUND);
 			
 		}
+		if (tocadiscos == null)
+			tocadiscos = new Reproductor();
 	}
 
+	
+	public void noEscucheNada()
+	{
+		hablador.decir("No escuché nada!");
+		tocadiscos.continuar();
+		atento = false;
+		
+	}
+	public void terminar()
+	{
+		AudioManager sonido = (AudioManager) contexto.getSystemService(Context.AUDIO_SERVICE);
+		sonido.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+		tocadiscos.terminar();
+		/*
+		try {
+			String cmd = "logcat " + "/storage/sdcard1/temp/logfile.log" + " MC:D *:S " ;
+			 Runtime.getRuntime().exec(cmd);
+			}
+			catch (IOException e) {
+			    // TODO Auto-generated catch block
+			    e.printStackTrace();
+			}
+			*/
+	}
+	
 	public void btConectado() {
 		buscarAuricular();
 		if (auricular != null & !llamada) {
@@ -209,20 +259,39 @@ public class Estados {
 
 	public void termineDeHablar() {
 
-		sr = SpeechRecognizer.createSpeechRecognizer(contexto);
-		listener = new MyRL();
-		sr.setRecognitionListener(listener);
-		Intent algo = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		algo.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		algo.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES");
-		algo.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
-		sr.startListening(algo);
+		System.out.println("Termine de hablar!");
+		if (atento) {
+			sr = SpeechRecognizer.createSpeechRecognizer(contexto);
+			listener = new MyRL();
+			sr.setRecognitionListener(listener);
+			Intent algo = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+			algo.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+			algo.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES");
+			algo.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+			sr.startListening(algo);
+			atento = false;
+		}
+		else
+			System.out.println("Y a mi que me importa");
 
 	}
 
 	public void probar() {
-		hablador.decir("Desea escucharlo?");
+		try {
+			String cmd = "logcat " + "/storage/sdcard1/temp/logfile.log" + " MC:D *:S " ;
+			 Runtime.getRuntime().exec(cmd);
+			}
+			catch (IOException e) {
+			    // TODO Auto-generated catch block
+			    e.printStackTrace();
+			}
+		//hablador.decir("Desea escucharlo?");
 		//hablador.decirNada();
+		Log.d("MC", "Mensake");
+		if (!tocadiscos.ocupado())
+		tocadiscos.tocarMusica();
+		else
+		tocadiscos.pausar();
 	}
 
 	public void escuche(String respuesta) {
@@ -248,18 +317,21 @@ public class Estados {
 	}
 
 	public void silenciarMusica() {
-		AudioManager am = (AudioManager) contexto.getSystemService(Context.AUDIO_SERVICE);
-		am.setStreamMute(AudioManager.STREAM_MUSIC, true);
+		tocadiscos.pausar();
 
 	}
 
 	public void desilenciarMusica() {
-		AudioManager am = (AudioManager) contexto
-				.getSystemService(Context.AUDIO_SERVICE);
-		am.setStreamMute(AudioManager.STREAM_MUSIC, false);
+		tocadiscos.continuar();
 
 	}
 
+	public Context darContexto()
+	{
+		return contexto;
+		
+	}
+	
 	public void nuevoMensaje(String quien, String texto) {
 		// TODO habilitar el check del auricular...
 		// if (auricular != null)
@@ -267,9 +339,22 @@ public class Estados {
 		if (hablador != null && !llamada) {
 			quien = this.buscarPorTel(quien);
 			//silenciarMusica();	
+			tocadiscos.pausar();
+			
+		    MediaPlayer mp = MediaPlayer.create(contexto, R.raw.coin );
+		    mp.start();
+		    mp.release();
+		    Log.d("MC", "Coin sonido");
 			hablador.avisarRte(quien);
 			hablador.decirNada();
 			msjPendiente = texto;
+			atento = true;
+			 Notification noti = new Notification.Builder(contexto)
+	         .setContentTitle("Mensje de " +  quien)
+	         .setContentText(texto)
+	         .setSmallIcon(R.drawable.ic_launcher)
+	         //.setLargeIcon(aBitmap)
+	         .build();			
 
 		}
 

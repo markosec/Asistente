@@ -28,6 +28,9 @@ class  MyRL implements RecognitionListener {
 	 @Override
 	 public void onError(int error) {
 	  Log.d("Speech", "onError");
+	  Estados jefe = Estados.getInstance();
+	  jefe.noEscucheNada();
+	  System.out.println("MyRL:No escuche nada reconocible");
 	 }
 
 	 @Override
@@ -43,6 +46,7 @@ class  MyRL implements RecognitionListener {
 	 @Override
 	 public void onReadyForSpeech(Bundle params) {
 	  Log.d("Speech", "onReadyForSpeech");
+	  System.out.println("MyRL: escuchando...");
 	 }
 	 
 
