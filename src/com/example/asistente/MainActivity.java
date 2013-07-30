@@ -1,12 +1,13 @@
 package com.example.asistente;
 
+import java.util.Calendar;
+
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.content.IntentFilter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -21,17 +22,21 @@ public class MainActivity extends Activity {
 	private LeeSms    receptor = new LeeSms();
 	private EscuchaBt conector = null;
 	private Telefono  llamadas = null;
+
+	private Logueador loguear = new Logueador();
  
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		
 		this.init();
-		findViewById(R.id.button1).setEnabled(false);
 		
-		Log.w("MC", "inicio...");
+		Calendar c = Calendar.getInstance(); 
+		
+		loguear.loguear("Inicio: " + c.get(Calendar.HOUR_OF_DAY) 
+				                   + c.get(Calendar.MINUTE)
+				                   + c.get(Calendar.SECOND));
 		
 	}
 
@@ -120,11 +125,11 @@ public void cambiarTitulo(String texto)
  {
 	 Estados jefe = Estados.getInstance(getApplicationContext());
 	 jefe.probar();
-	 Notification noti = new Notification.Builder(getApplicationContext())
-     .setContentTitle("Mensaje de prueba")
-     .setContentText("Esto vendria a ser el cuerpo de la notificacion")
-     .setSmallIcon(R.drawable.ic_launcher)
-     //.setLargeIcon(aBitmap)
-     .build();
+//	 Notification noti = new Notification.Builder(getApplicationContext())
+//     .setContentTitle("Mensaje de prueba")
+//     .setContentText("Esto vendria a ser el cuerpo de la notificacion")
+//     .setSmallIcon(R.drawable.ic_launcher)
+//     //.setLargeIcon(aBitmap)
+//     .build();
  }
 }

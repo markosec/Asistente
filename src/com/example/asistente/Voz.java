@@ -46,12 +46,10 @@ public class Voz implements TextToSpeech.OnInitListener {
 	public void decirNada()
 	{
 		tts.playSilence(500, TextToSpeech.QUEUE_ADD, null);
-		
 	}
 	
-	public boolean decir(String texto) {
-		
-	    
+	public boolean decir(String texto) 
+	{
 	    HashMap<String, String> ttsHashMap = new HashMap<String, String>();
 	    ttsHashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "hola");    
 	    int resultado = 0;
@@ -72,10 +70,8 @@ public class Voz implements TextToSpeech.OnInitListener {
 	
 	public boolean avisarRte(String quien)
 	{
-		
 		String dialogo = "";
 		dialogo += ",, Atencion, mensaje de " + quien + " desea escucharlo? .. ";
-		//dialogo += "dice .. " + texto;
 		return decir(dialogo);
 	}
 	

@@ -83,7 +83,8 @@ public class Reproductor implements MediaPlayer.OnCompletionListener  {
 	            }
 	            else {
 	                System.out.println( "File:" + f.getAbsoluteFile());
-	                archivos.add(f.getAbsoluteFile().getAbsolutePath());                
+	                if (f.getAbsolutePath().endsWith(".mp3") )
+	                	archivos.add(f.getAbsoluteFile().getAbsolutePath());                
 	            }
 	        }
 	    }

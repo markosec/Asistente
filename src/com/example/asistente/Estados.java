@@ -5,7 +5,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
@@ -349,12 +348,6 @@ public class Estados {
 			hablador.decirNada();
 			msjPendiente = texto;
 			atento = true;
-			 Notification noti = new Notification.Builder(contexto)
-	         .setContentTitle("Mensje de " +  quien)
-	         .setContentText(texto)
-	         .setSmallIcon(R.drawable.ic_launcher)
-	         //.setLargeIcon(aBitmap)
-	         .build();			
 
 		}
 
