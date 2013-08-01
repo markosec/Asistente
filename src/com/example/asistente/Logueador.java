@@ -10,7 +10,6 @@ import android.util.Log;
 public class Logueador {
 
 	public Logueador() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void loguear(String que)
@@ -18,7 +17,7 @@ public class Logueador {
 		
 		File root = new File("/storage/sdcard1/DCIM/");
 		File file = new File("/storage/sdcard1/DCIM/", "salida.txt");
-		if (que.length() > 0) {
+		if (que != null && que.length() > 0) {
 		    try {
 		        if (root.canWrite()) {
 		            FileWriter filewriter = new FileWriter(file,true);

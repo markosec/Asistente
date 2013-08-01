@@ -1,6 +1,5 @@
 package com.example.asistente;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
 
@@ -34,11 +33,12 @@ public class Estados {
 	private String msjPendiente = "";
 	private boolean atento = false;
 	private Reproductor tocadiscos = null;
+	private boolean pausaMusica = false;
 	private MainActivity visual = null;
-	
+
 
 	public Estados() {
-		
+
 
 	}
 
@@ -68,16 +68,10 @@ public class Estados {
 					for (BluetoothDevice device : pairedDevices) {
 						if (device.getName().contentEquals("N6")) {
 
-							String st = "Se encontro: ";
-							st += device.getName();
-							Toast.makeText(contexto, st, Toast.LENGTH_SHORT)
-									.show();
 							if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-								Toast.makeText(contexto,"pero no esta conectado",Toast.LENGTH_SHORT).show();
 								auricular = null;
 							} else if (mBluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET) == BluetoothAdapter.STATE_CONNECTED)
 								auricular = device;
-
 							else
 								auricular = null;
 						}
@@ -142,20 +136,20 @@ public class Estados {
 				" - " +
 				mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
 		if (mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)  == null && 
-		    mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST) == null)
+				mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST) == null)
 		{
 			texto = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
 		}
 		visual.cambiarTitulo(texto);
 		Log.d("MC", "Tags de la cancion: " + texto);
-		
+
 	}
-	
+
 	public void setVisual(MainActivity cual)
 	{
 		visual = cual;
 	}
-	
+
 	public void iniciar() {
 
 		AudioManager sonido = null;
@@ -164,52 +158,40 @@ public class Estados {
 		if (hablador == null) {
 			hablador = new Voz();
 			hablador.iniciar(contexto);
-			
+
 		}
 
 		if (auricular == null)
 			this.buscarAuricular();
-//		if ((contexto != null) && (auricular != null)) { TODO cambiar
 		if ((contexto != null) ) {
 			sonido = (AudioManager) contexto.getSystemService(Context.AUDIO_SERVICE);
-			//sonido.setRingerMode(AudioManager.RINGER_MODE_SILENT); //TODO esto se cambia para el bip
-			
-			sonido.setStreamVolume(6, sonido.getStreamMaxVolume(6), AudioManager.FLAG_PLAY_SOUND);
-			
+			if (sonido.getStreamVolume(6) != sonido.getStreamMaxVolume(6))
+				sonido.setStreamVolume(6, sonido.getStreamMaxVolume(6), AudioManager.FLAG_PLAY_SOUND);
+
 		}
 		if (tocadiscos == null)
 			tocadiscos = new Reproductor();
 	}
 
-	
+
 	public void noEscucheNada()
 	{
 		hablador.decir("No escuché nada!");
 		tocadiscos.continuar();
 		atento = false;
-		
+
 	}
 	public void terminar()
 	{
 		AudioManager sonido = (AudioManager) contexto.getSystemService(Context.AUDIO_SERVICE);
 		sonido.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 		tocadiscos.terminar();
-		/*
-		try {
-			String cmd = "logcat " + "/storage/sdcard1/temp/logfile.log" + " MC:D *:S " ;
-			 Runtime.getRuntime().exec(cmd);
-			}
-			catch (IOException e) {
-			    // TODO Auto-generated catch block
-			    e.printStackTrace();
-			}
-			*/
 	}
-	
+
 	public void btConectado() {
 		buscarAuricular();
 		if (auricular != null & !llamada) {
-			
+
 			hablador.decir("Casco conectado");
 		}
 	}
@@ -218,6 +200,8 @@ public class Estados {
 		auricular = null;
 		if (hablador != null)
 			hablador.callate();
+		if (tocadiscos.ocupado())
+			tocadiscos.pausar();
 	}
 
 	public String buscarPorTel(String telefono) {
@@ -258,7 +242,7 @@ public class Estados {
 
 	public void termineDeHablar() {
 
-		System.out.println("Termine de hablar!");
+		System.out.println("Termino de hablar de hablar!");
 		if (atento) {
 			sr = SpeechRecognizer.createSpeechRecognizer(contexto);
 			listener = new MyRL();
@@ -276,34 +260,23 @@ public class Estados {
 	}
 
 	public void probar() {
-		try {
-			String cmd = "logcat " + "/storage/sdcard1/temp/logfile.log" + " MC:D *:S " ;
-			 Runtime.getRuntime().exec(cmd);
-			}
-			catch (IOException e) {
-			    // TODO Auto-generated catch block
-			    e.printStackTrace();
-			}
-		//hablador.decir("Desea escucharlo?");
-		//hablador.decirNada();
-		Log.d("MC", "Mensake");
-		if (!tocadiscos.ocupado())
-		tocadiscos.tocarMusica();
-		else
-		tocadiscos.pausar();
+
+		MediaPlayer mp = MediaPlayer.create(contexto, R.raw.coin );
+		mp.start();
+
 	}
 
 	public void escuche(String respuesta) {
 		Locale lang = new Locale("spa", "ESP");
 		respuesta = respuesta.toLowerCase(lang);
-		if (respuesta.contains("si") || respuesta.contains("sí")) 
+		if (respuesta.contains("si") || respuesta.contains("sí") || respuesta.contains("iii")) 
 		{
 			if (msjPendiente.length() > 0)
 				hablador.decir("dice.." + msjPendiente); //Se lee el msj
 			else
 				hablador.decir("Me olvidé");            //No hay mensaje para leer..raro...
 		}
-		else if (respuesta.contains("no"))
+		else if (respuesta.contains("no") || respuesta.contains("ooo"))
 		{
 			hablador.decir("a la mierrda"); // AKA no se lee
 		}
@@ -312,47 +285,64 @@ public class Estados {
 		else
 			hablador.decir("Algo raro");
 
-		desilenciarMusica();
+		//desilenciarMusica();
 	}
-
+	public void tocarMusica()
+	{
+		if (tocadiscos.ocupado() && !pausaMusica)
+		{
+			tocadiscos.pausar();
+			pausaMusica = true;
+		}
+		else if (pausaMusica)
+		{
+			tocadiscos.continuar();
+			pausaMusica = false;
+		}
+		else
+		{
+			tocadiscos.tocarMusica();
+			pausaMusica = false;
+		}
+	}
 	public void silenciarMusica() {
 		tocadiscos.pausar();
-
 	}
 
 	public void desilenciarMusica() {
 		tocadiscos.continuar();
+	}
+
+	public void siguienteCancion()
+	{
+		if (tocadiscos.ocupado())
+			tocadiscos.siguienteCancion();
+		else
+			tocadiscos.tocarMusica();
+	}
+	public void pararMusica()
+	{
+		if (tocadiscos.ocupado())
+			tocadiscos.reset();
 
 	}
 
 	public Context darContexto()
 	{
 		return contexto;
-		
+
 	}
-	
+
 	public void nuevoMensaje(String quien, String texto) {
-		// TODO habilitar el check del auricular...
-		// if (auricular != null)
-		// {
 		if (hablador != null && !llamada) {
-			quien = this.buscarPorTel(quien);
-			//silenciarMusica();	
-			tocadiscos.pausar();
-			
-		    MediaPlayer mp = MediaPlayer.create(contexto, R.raw.coin );
-		    mp.start();
-		    mp.release();
-		    Log.d("MC", "Coin sonido");
+			quien = this.buscarPorTel(quien);	
+			tocadiscos.pausar();	
+			Log.d("MC", "Coin sonido");
 			hablador.avisarRte(quien);
 			hablador.decirNada();
 			msjPendiente = texto;
 			atento = true;
-
 		}
-
-		// }
-
 	}
 
 	public void reconocerVoz() {

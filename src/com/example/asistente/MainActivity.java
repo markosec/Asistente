@@ -5,7 +5,6 @@ import java.util.Calendar;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.content.IntentFilter;
 import android.view.Menu;
@@ -125,11 +124,24 @@ public void cambiarTitulo(String texto)
  {
 	 Estados jefe = Estados.getInstance(getApplicationContext());
 	 jefe.probar();
-//	 Notification noti = new Notification.Builder(getApplicationContext())
-//     .setContentTitle("Mensaje de prueba")
-//     .setContentText("Esto vendria a ser el cuerpo de la notificacion")
-//     .setSmallIcon(R.drawable.ic_launcher)
-//     //.setLargeIcon(aBitmap)
-//     .build();
+
+ }
+ public void play(View view){
+	 Estados jefe = Estados.getInstance(getApplicationContext());
+	 jefe.tocarMusica();
+	 
+	 
+ }
+ public void siguiente(View view)
+ {
+	 Estados jefe = Estados.getInstance(getApplicationContext());
+	 jefe.siguienteCancion();
+	 
+ }
+ public void parar(View view)
+ {
+	 Estados jefe = Estados.getInstance(getApplicationContext());
+	 jefe.pararMusica();
+	 
  }
 }

@@ -9,7 +9,6 @@ import android.telephony.TelephonyManager;
 public class Telefono extends BroadcastReceiver {
 
 	public Telefono() {
-		// TODO Auto-generated constructor stub
 		
 	}
 

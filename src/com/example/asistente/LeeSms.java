@@ -9,7 +9,6 @@ import android.telephony.SmsMessage;
 public class LeeSms extends BroadcastReceiver {
 
 	public LeeSms() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import android.util.Log;
 public class Reproductor implements MediaPlayer.OnCompletionListener  {
 
 	public Reproductor() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private List<String> archivos = new ArrayList<String>();
@@ -38,28 +37,30 @@ public class Reproductor implements MediaPlayer.OnCompletionListener  {
 		try {
 			String tema;
 			tema = archivos.get(this.siguiente());
+			mp.reset();
 			mp.setDataSource(tema);
-			
 			mp.prepare(); // might take long! (for buffering, etc)
 			mp.start();
 			Estados jefe = Estados.getInstance();
 			jefe.cambieCancion(tema);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			loguear.loguear(e.getMessage());
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			loguear.loguear(e.getMessage());
 		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
 			loguear.loguear(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			loguear.loguear(e.getMessage());
 		}
 		return true; 
 			
 			
+	}
+	
+	public void reset()
+	{
+		mp.reset();
+		
 	}
 
 	public void terminar()
@@ -107,10 +108,9 @@ public class Reproductor implements MediaPlayer.OnCompletionListener  {
 		mp.start();
 		Log.d("MC", "Continuar con la cancion");
 	}
-	@Override
-	public void onCompletion(MediaPlayer arg0) {
-		// TODO Auto-generated method stub
-		
+	
+	public void siguienteCancion()
+	{
 		try {
 			loguear.loguear("Cambio de cancion...");
 			mp.reset();
@@ -125,17 +125,20 @@ public class Reproductor implements MediaPlayer.OnCompletionListener  {
 			Estados jefe = Estados.getInstance();
 			jefe.cambieCancion(cancion);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			loguear.loguear(e.getMessage());
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			loguear.loguear(e.getMessage());
 		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
 			loguear.loguear(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			loguear.loguear(e.getMessage());
 		}
+		
+	}
+	
+	@Override
+	public void onCompletion(MediaPlayer arg0) {
+		this.siguienteCancion();
+
 	}
 }

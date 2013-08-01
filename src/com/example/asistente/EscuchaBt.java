@@ -12,7 +12,6 @@ public class EscuchaBt extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context cont, Intent inte) {
-		// TODO Auto-generated method stub
 			Estados jefe = Estados.getInstance(cont);
 		   String action = inte.getAction();
 	        if(action.equals("android.bluetooth.device.action.ACL_CONNECTED"))

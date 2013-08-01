@@ -8,5 +8,9 @@
     <string name="b_stop">Detener</string>
     <string name="title_activity_display_message">Mensajito</string>
     <string name="Probar_t">Probar</string>
+    <string name="s_stop">Boton de stop</string><string name="s_play">Boton de play</string>
+    
+    <string name="s_next">Boton next</string>
+    <string name="s_apagar">Apagado</string>
 
 </resources>
